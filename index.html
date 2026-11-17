@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#17142b" />
+    <meta name="description" content="A tiny tracker for doing absolutely nothing." />
+    <title>The Nothing Department</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #f7f2e9;
+        --muted: #aaa6bd;
+        --night: #17142b;
+        --panel: rgba(37, 32, 62, .78);
+        --line: rgba(255, 255, 255, .12);
+        --lime: #d6fa76;
+        --pink: #ff91bd;
+        --mono: "DM Mono", monospace;
+        --sans: "Space Grotesk", sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        min-height: 100svh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        overflow-x: hidden;
+        padding: 32px 20px;
+        color: var(--ink);
+        font-family: var(--sans);
+        background:
+          radial-gradient(ellipse at 12% 10%, rgba(118, 84, 190, .26), transparent 35%),
+          radial-gradient(ellipse at 92% 88%, rgba(255, 108, 163, .15), transparent 32%),
+          var(--night);
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        content: "";
+        opacity: .18;
+        background-image: radial-gradient(rgba(255,255,255,.65) .7px, transparent .7px);
+        background-size: 24px 24px;
+        mask-image: linear-gradient(135deg, black, transparent 72%);
+      }
+
+      .page { width: min(100%, 790px); }
+
+      .topline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin: 0 4px 18px;
+        color: var(--muted);
+        font: 11px var(--mono);
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+
+      .live-mark { display: inline-flex; align-items: center; gap: 9px; }
+      .live-mark::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--lime);
+        box-shadow: 0 0 14px rgba(214, 250, 118, .7);
+        content: "";
+      }
+
+      .card {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        padding: clamp(28px, 7vw, 66px);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        background: linear-gradient(145deg, rgba(44, 38, 72, .91), var(--panel));
+        box-shadow: 0 32px 100px rgba(0, 0, 0, .3), inset 0 1px rgba(255,255,255,.07);
+        text-align: center;
+        backdrop-filter: blur(18px);
+      }
+
+      .card::before {
+        position: absolute;
+        z-index: -1;
+        top: -154px;
+        right: -92px;
+        width: 310px;
+        aspect-ratio: 1;
+        border: 1px solid rgba(255, 145, 189, .22);
+        border-radius: 50%;
+        box-shadow: 0 0 0 22px rgba(255, 145, 189, .025), 0 0 0 44px rgba(255, 145, 189, .025), 0 0 90px rgba(255, 145, 189, .11);
+        content: "";
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 18px;
+        padding: 8px 12px;
+        border: 1px solid rgba(214, 250, 118, .25);
+        border-radius: 999px;
+        color: var(--lime);
+        background: rgba(214, 250, 118, .06);
+        font: 11px var(--mono);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2.6rem, 9vw, 5.8rem);
+        font-weight: 600;
+        line-height: .94;
+        letter-spacing: -.075em;
+      }
+
+      h1 span { color: var(--pink); }
+
+      .intro {
+        max-width: 410px;
+        margin: 20px auto 0;
+        color: var(--muted);
+        font-size: clamp(14px, 2.5vw, 17px);
+        line-height: 1.65;
+      }
+
+      .counter-wrap {
+        margin: clamp(30px, 7vw, 54px) 0 26px;
+        padding: clamp(20px, 5vw, 32px) 12px;
+        border-block: 1px solid var(--line);
+      }
+
+      .counter-label {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font: 11px var(--mono);
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+
+      .counter {
+        margin: 0;
+        color: var(--lime);
+        font-size: clamp(3.2rem, 13vw, 7rem);
+        font-weight: 500;
+        line-height: 1;
+        letter-spacing: -.09em;
+        font-variant-numeric: tabular-nums;
+        text-shadow: 0 0 40px rgba(214, 250, 118, .14);
+      }
+
+      .counter-unit {
+        margin: 10px 0 0;
+        color: var(--ink);
+        font-size: 15px;
+      }
+
+      .activity {
+        min-height: 25px;
+        margin: 0 0 18px;
+        color: var(--pink);
+        font-size: 14px;
+        font-weight: 500;
+      }
+
+      button {
+        min-height: 52px;
+        padding: 0 23px;
+        border: 0;
+        border-radius: 999px;
+        color: #201c31;
+        background: var(--lime);
+        box-shadow: 0 8px 24px rgba(214, 250, 118, .16);
+        font: 700 14px var(--sans);
+        cursor: pointer;
+        transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+      }
+
+      button:hover { transform: translateY(-2px) rotate(-1deg); box-shadow: 0 12px 30px rgba(214, 250, 118, .24); }
+      button:active { transform: translateY(0) scale(.98); }
+      button:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; }
+
+      .hint { margin: 16px 0 0; color: #817c97; font: 11px var(--mono); }
+
+      @media (max-width: 480px) {
+        body { padding: 18px 14px; }
+        .topline { margin-inline: 2px; font-size: 9px; }
+        .card { border-radius: 22px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="topline" aria-label="Page status">
+        <span>Dept. of Doing Nothing</span>
+        <span class="live-mark">Session in progress</span>
+      </div>
+      <section class="card" aria-labelledby="title">
+        <p class="eyebrow">✳ Officially unoccupied</p>
+        <h1 id="title">The art of<br /><span>doing nothing.</span></h1>
+        <p class="intro">No goals. No hustle. Just you, this page, and absolutely nowhere to be.</p>
+
+        <div class="counter-wrap">
+          <p class="counter-label">Your current streak of chilling</p>
+          <p class="counter" id="counter" aria-label="0">00:00</p>
+          <p class="counter-unit" id="unit">minutes of glorious nothing</p>
+        </div>
+
+        <p class="activity" id="activity" aria-live="polite">Everything is still. Beautiful.</p>
+        <button id="activity-button" type="button">I did something ✦</button>
+        <p class="hint">psst… pressing any key counts as “something” too</p>
+      </section>
+    </main>
+    <script src="index.js" defer></script>
+  </body>
+</html>
